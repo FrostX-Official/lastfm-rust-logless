@@ -1,6 +1,9 @@
 [package]
 name = "lastfm-rust"
 version = "0.1.0"
+authors = ["uppercase <uppercasee@proton.me>"]
 edition = "2021"
+description = "Last.fm API wrapper for Rust "
+license = "MIT"
 
 [dependencies]
