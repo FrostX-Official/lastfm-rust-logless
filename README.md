@@ -1,4 +1,4 @@
-# Lastfm-rust: Rust library for accessing the Last.fm API. 
+# Lastfm-rust: Rust library for accessing the Last.fm API.
 
 ## Overview
 
@@ -105,10 +105,10 @@ println!("{response}");
 
 - [x] **Album**
 - [x] **Auth**
-- [ ] **Artist**
-- [ ] **Chart**
-- [ ] **Geo**
-- [ ] **Library**
+- [x] **Artist**
+- [x] **Chart**
+- [x] **Geo**
+- [x] **Library**
 - [ ] **Tag**
 - [ ] **Track**
 - [ ] **User**
