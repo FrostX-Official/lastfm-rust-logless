@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let response = lastfm.auth().get_token().send().await?;
 
-    println!("Value: {response}");
+    println!("{response}");
 
     Ok(())
 }

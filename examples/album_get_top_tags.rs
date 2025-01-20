@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .send()
         .await?;
 
-    println!("Value: {response}");
+    println!("{response}");
 
     Ok(())
 }

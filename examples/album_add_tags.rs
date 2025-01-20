@@ -1,5 +1,6 @@
 use dotenv::dotenv;
 use lastfm_rust::Lastfm;
+use lastfm_rust::WithArtist;
 use std::error::Error;
 
 #[tokio::main]
@@ -15,7 +16,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .session_key(sk)
         .build()?;
 
-    let sk = lastfm.auth();
+    lastfm.auth();
     // lastfm.set_sk(sk);
 
     let response = lastfm
@@ -27,9 +28,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .send()
         .await?;
 
-    println!("Value: {:?}", response);
-    // println!("STATUS: {:?}", response.status());
-    // println!("BODY: {:?}", response.text().await?);
+    println!("{:?}", response);
 
     Ok(())
 }

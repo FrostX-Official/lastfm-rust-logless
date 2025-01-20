@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .session_key(sk)
         .build()?;
 
-    let sk = lastfm.auth();
+    let _sk = lastfm.auth();
     // lastfm.set_sk(sk);
 
     let response = lastfm
@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .send()
         .await?;
 
-    println!("Value: {:?}", response);
+    println!("{response}");
 
     Ok(())
 }
