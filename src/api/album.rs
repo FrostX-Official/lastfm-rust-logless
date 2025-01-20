@@ -7,7 +7,7 @@ mod search;
 
 use crate::Lastfm;
 
-pub use add_tags::{AlbumAddTagsRequest, WithArtist};
+pub use add_tags::AlbumAddTagsRequest;
 pub use get_info::AlbumGetInfo;
 pub use get_tags::AlbumGetTags;
 pub use get_top_tags::AlbumGetTopTags;

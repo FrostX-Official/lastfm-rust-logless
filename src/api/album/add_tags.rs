@@ -51,18 +51,13 @@ impl<'a> AlbumAddTagsRequest<'a> {
         }
     }
 
-    pub fn artist(mut self, artist: &str) -> Self {
-        self.artist = Some(artist.to_string());
+    pub fn artist<T>(mut self, artist: T) -> Self
+    where
+        T: Into<String>,
+    {
+        self.artist = Some(artist.into());
         self
     }
-
-    // pub fn artist<T>(mut self, artist: T) -> Self
-    // where
-    //     T: Into<String>,
-    // {
-    //     self.artist = Some(artist.into());
-    //     self
-    // }
 
     pub fn album<T>(mut self, album: T) -> Self
     where

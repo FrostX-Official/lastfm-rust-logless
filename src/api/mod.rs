@@ -5,7 +5,6 @@ mod auth;
 mod parameter_builder;
 
 pub use album::Album;
-pub use album::WithArtist;
 pub use auth::Auth;
 pub use parameter_builder::ParameterBuilder;
 

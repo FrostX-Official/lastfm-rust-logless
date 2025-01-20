@@ -1,6 +1,5 @@
 use dotenv::dotenv;
 use lastfm_rust::Lastfm;
-use lastfm_rust::WithArtist;
 use std::error::Error;
 
 #[tokio::main]
