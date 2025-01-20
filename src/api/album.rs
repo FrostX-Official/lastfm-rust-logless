@@ -27,99 +27,11 @@ impl<'a> Album<'a> {
     }
 
     /// Creates a request to get tags for the album.
-    ///
-    /// # Example
-    ///
-    /// Ensure you have the following dependencies in your `Cargo.toml`:
-    ///
-    /// ```toml
-    /// [dependencies]
-    /// tokio = { version = "1", features = ["full"] }
-    /// dotenv = "0.15"
-    /// lastfm_rust = "0.1"
-    /// ```
-    ///
-    /// ```no_run
-    /// use dotenv::dotenv;
-    /// use lastfm_rust::Lastfm;
-    /// use std::error::Error;
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn Error>> {
-    ///     dotenv().ok();
-    ///     let api_key = std::env::var("API_KEY").expect("API_KEY env variable is required");
-    ///     let api_secret = std::env::var("API_SECRET").expect("API_SECRET env variable is required");
-    ///
-    ///     let lastfm = Lastfm::builder()
-    ///         .api_key(api_key)
-    ///         .api_secret(api_secret)
-    ///         .build()?;
-    ///
-    ///     // Fetch tags for the album
-    ///     let tags = lastfm
-    ///         .album()
-    ///         .get_tags()
-    ///         .artist("Name_of_the_artist")
-    ///         .album("Name_of_the_album")
-    ///         .user("username")
-    ///         .autocorrect(true)
-    ///         .send()
-    ///         .await?;
-    ///
-    ///     println!("{:?}", tags);
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
     pub fn get_tags(&mut self) -> AlbumGetTags<'_> {
         AlbumGetTags::new(self.lastfm)
     }
 
     /// Creates a request to add tags to the album.
-    ///
-    /// # Example
-    ///
-    /// Ensure you have the following dependencies in your `Cargo.toml`:
-    ///
-    /// ```toml
-    /// [dependencies]
-    /// tokio = { version = "1", features = ["full"] }
-    /// dotenv = "0.15"
-    /// lastfm_rust = "0.1"
-    /// ```
-    ///
-    /// ```no_run
-    /// use dotenv::dotenv;
-    /// use lastfm_rust::Lastfm;
-    /// use std::error::Error;
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn Error>> {
-    ///     dotenv().ok();
-    ///     let api_key = std::env::var("API_KEY").expect("API_KEY env variable is required");
-    ///     let api_secret = std::env::var("API_SECRET").expect("API_SECRET env variable is required");
-    ///
-    ///     let mut lastfm = Lastfm::builder()
-    ///         .api_key(api_key)
-    ///         .api_secret(api_secret)
-    ///         .build()?;
-    ///
-    ///     lastfm.auth().await?;
-    ///
-    ///     let response = lastfm
-    ///         .album()
-    ///         .add_tags()
-    ///         .artist("Name_of_the_artist")
-    ///         .album("Name_of_the_album")
-    ///         .tags("comma,seperated,tags")
-    ///         .send()
-    ///         .await?;
-    ///
-    ///     println!("{:?}", response);
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
     pub fn add_tags(&mut self) -> AlbumAddTagsRequest<'_> {
         AlbumAddTagsRequest::new(self.lastfm)
     }
