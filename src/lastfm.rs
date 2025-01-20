@@ -123,7 +123,10 @@ impl Lastfm {
         params: &mut std::collections::HashMap<String, String>,
         http_method: Method,
         auth: bool,
-    ) -> Result<Value>  where T:Into<String>{
+    ) -> Result<Value>
+    where
+        T: Into<String>,
+    {
         // TODO: Rate Limiting
         // let rate_limiter = &self.lastfm.rate_limiter;
         // rate_limiter.until_ready().await;

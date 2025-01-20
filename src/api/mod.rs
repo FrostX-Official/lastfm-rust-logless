@@ -2,10 +2,12 @@ use std::fmt;
 
 mod album;
 mod auth;
+mod parameter_builder;
 
 pub use album::Album;
 pub use album::WithArtist;
 pub use auth::Auth;
+pub use parameter_builder::ParameterBuilder;
 
 #[derive(Debug, Clone)]
 pub enum LastfmMethod {

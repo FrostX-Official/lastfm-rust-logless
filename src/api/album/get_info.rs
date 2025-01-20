@@ -1,8 +1,7 @@
 use reqwest::Method;
 use serde_json::Value;
-use std::collections::HashMap;
 
-use crate::api::LastfmMethod;
+use crate::api::{LastfmMethod, ParameterBuilder};
 use crate::{Error, Lastfm, Result};
 
 #[derive(Debug)]
@@ -83,32 +82,17 @@ impl<'a> AlbumGetInfo<'a> {
     pub async fn send(self) -> Result<Value> {
         self.validate()?;
 
-        let mut params: std::collections::HashMap<String, String> = HashMap::new();
-        params.insert("api_key".to_string(), self.lastfm.get_api_key());
+        let mut builder = ParameterBuilder::new();
 
-        if let Some(artist) = self.artist {
-            params.insert("artist".to_string(), artist);
-        }
+        builder = builder
+            .add_optional("artist", self.artist)
+            .add_optional("album", self.album)
+            .add_optional("mbid", self.mbid)
+            .add_optional("username", self.username)
+            .add_optional("lang", self.lang)
+            .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
 
-        if let Some(album) = self.album {
-            params.insert("album".to_string(), album);
-        }
-
-        if let Some(mbid) = self.mbid {
-            params.insert("mbid".to_string(), mbid);
-        }
-
-        if let Some(autocorrect) = self.autocorrect {
-            params.insert("autocorrect".to_string(), autocorrect.to_string());
-        }
-
-        if let Some(username) = self.username {
-            params.insert("username".to_string(), username);
-        }
-
-        if let Some(lang) = self.lang {
-            params.insert("lang".to_string(), lang);
-        }
+        let mut params = builder.build();
 
         let response = self
             .lastfm

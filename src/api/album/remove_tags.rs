@@ -1,8 +1,7 @@
 use reqwest::Method;
 use serde_json::Value;
-use std::collections::HashMap;
 
-use crate::api::LastfmMethod;
+use crate::api::{LastfmMethod, ParameterBuilder};
 use crate::{Error, Lastfm, Result};
 
 #[derive(Debug)]
@@ -52,25 +51,32 @@ impl<'a> AlbumRemoveTag<'a> {
         if self.tag.is_none() {
             return Err(Error::Generic("Field 'tags' is required.".to_string()));
         }
-        //TODO: check a max of 10 tags...
+
+        let tag_count = self
+            .tag
+            .as_ref()
+            .unwrap()
+            .split(',')
+            .collect::<Vec<_>>()
+            .len();
+        if tag_count > 10 {
+            return Err(Error::Generic("Cannot exceed 10 tags.".to_string()));
+        }
+
         Ok(())
     }
 
     pub async fn send(self) -> Result<Value> {
         self.validate()?;
-        let mut params: HashMap<String, String> = HashMap::new();
 
-        if let Some(artist) = self.artist {
-            params.insert("artist".to_string(), artist);
-        }
+        let mut builder = ParameterBuilder::new();
 
-        if let Some(album) = self.album {
-            params.insert("album".to_string(), album);
-        }
+        builder = builder
+            .add("artist", self.artist.unwrap())
+            .add("album", self.album.unwrap())
+            .add("tag", self.tag.unwrap());
 
-        if let Some(tag) = self.tag {
-            params.insert("tags".to_string(), tag);
-        }
+        let mut params = builder.build();
 
         let response = self
             .lastfm

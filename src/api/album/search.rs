@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
 use reqwest::Method;
 use serde_json::Value;
 
-use crate::api::LastfmMethod;
-use crate::{Lastfm, Result};
+use crate::api::{LastfmMethod, ParameterBuilder};
+use crate::{Error, Lastfm, Result};
 
 #[derive(Debug)]
 pub struct AlbumSearch<'a> {
@@ -46,6 +44,10 @@ impl<'a> AlbumSearch<'a> {
 
     /// Validates the request parameters.
     fn validate(&self) -> Result<()> {
+        if self.album.is_none() || self.album.as_ref().unwrap().is_empty() {
+            return Err(Error::Generic("The album name is required.".to_string()));
+        }
+
         Ok(())
     }
 
@@ -53,20 +55,14 @@ impl<'a> AlbumSearch<'a> {
     pub async fn send(self) -> Result<Value> {
         self.validate()?;
 
-        let mut params: std::collections::HashMap<String, String> = HashMap::new();
-        params.insert("api_key".to_string(), self.lastfm.get_api_key());
+        let mut builder = ParameterBuilder::new();
 
-        if let Some(album) = self.album {
-            params.insert("album".to_string(), album);
-        }
+        builder = builder
+            .add("album", self.album.expect("The album name is required!"))
+            .add_optional("limit", self.limit.map(|b| b.to_string()))
+            .add_optional("page", self.page.map(|b| b.to_string()));
 
-        if let Some(limit) = self.limit {
-            params.insert("limit".to_string(), limit.to_string());
-        }
-
-        if let Some(page) = self.page {
-            params.insert("page".to_string(), page.to_string());
-        }
+        let mut params = builder.build();
 
         let response = self
             .lastfm
