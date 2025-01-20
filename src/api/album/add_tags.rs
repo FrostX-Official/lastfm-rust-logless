@@ -115,7 +115,7 @@ impl<'a> AlbumAddTagsRequest<'a> {
 
         let response = self
             .lastfm
-            .send_request(self.method, &mut params, Method::POST, true)
+            .send_request(self.method, &mut params, Method::POST)
             .await?;
 
         Ok(response)

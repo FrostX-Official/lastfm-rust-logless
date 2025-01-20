@@ -59,8 +59,10 @@ impl<'a> AlbumRemoveTag<'a> {
             .split(',')
             .collect::<Vec<_>>()
             .len();
-        if tag_count > 10 {
-            return Err(Error::Generic("Cannot exceed 10 tags.".to_string()));
+        if tag_count > 1 {
+            return Err(Error::Generic(
+                "Only 1 tag is allowed to remove at a time".to_string(),
+            ));
         }
 
         Ok(())
@@ -80,7 +82,7 @@ impl<'a> AlbumRemoveTag<'a> {
 
         let response = self
             .lastfm
-            .send_request(self.method, &mut params, Method::POST, true)
+            .send_request(self.method, &mut params, Method::POST)
             .await?;
 
         Ok(response)

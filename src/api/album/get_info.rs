@@ -96,7 +96,7 @@ impl<'a> AlbumGetInfo<'a> {
 
         let response = self
             .lastfm
-            .send_request(self.method, &mut params, Method::GET, false)
+            .send_request(self.method, &mut params, Method::GET)
             .await?;
 
         Ok(response)

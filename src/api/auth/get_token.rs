@@ -37,7 +37,7 @@ impl<'a> AuthGetToken<'a> {
         let mut token_params = self.request_token_params();
         let response = self
             .lastfm
-            .send_request(self.method, &mut token_params, Method::GET, false)
+            .send_request(self.method, &mut token_params, Method::GET)
             .await?;
 
         Ok(response)
