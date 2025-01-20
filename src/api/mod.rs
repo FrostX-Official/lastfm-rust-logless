@@ -178,12 +178,18 @@ impl From<LastfmMethod> for String {
 
 impl LastfmMethod {
     pub fn requires_auth(&self) -> bool {
-        match self {
-            LastfmMethod::AlbumAddTags => true,
-            LastfmMethod::AlbumRemoveTag => true,
-            LastfmMethod::ArtistAddTags => true,
-            LastfmMethod::ArtistRemoveTag => true,
-            _ => false, // default case where methods don't need authentication
-        }
+        matches!(
+            self,
+            LastfmMethod::AlbumAddTags
+                | LastfmMethod::AlbumRemoveTag
+                | LastfmMethod::ArtistAddTags
+                | LastfmMethod::ArtistRemoveTag
+                | LastfmMethod::TrackAddTags
+                | LastfmMethod::TrackLove
+                | LastfmMethod::TrackUnlove
+                | LastfmMethod::TrackRemoveTag
+                | LastfmMethod::TrackUpdateNowPlaying
+                | LastfmMethod::TrackScrobble
+        )
     }
 }
