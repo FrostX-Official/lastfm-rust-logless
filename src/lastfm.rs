@@ -3,11 +3,11 @@ use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
-use crate::api::LastfmMethod;
-use crate::error::{ApiError, Error, Result};
-use crate::Album;
-use crate::Artist;
-use crate::Auth;
+use crate::{
+    api::{Chart, Geo, LastfmMethod, Library},
+    error::{ApiError, Error, Result},
+    Album, Artist, Auth,
+};
 
 pub const LASTFM_API_URL: &str = "http://ws.audioscrobbler.com/2.0/";
 
@@ -169,8 +169,23 @@ impl Lastfm {
         Artist::new(self)
     }
 
-    /// Creates a new `Auth` instance for interacting with artist-related methods.
+    /// Creates a new `Auth` instance for interacting with auth-related methods.
     pub fn auth(&self) -> Auth {
         Auth::new(self)
+    }
+
+    /// Creates a new `Chart` instance for interacting with chart-related methods.
+    pub fn chart(&self) -> Chart {
+        Chart::new(self)
+    }
+
+    /// Creates a new `Geo` instance for interacting with geo-related methods.
+    pub fn geo(&self) -> Geo {
+        Geo::new(self)
+    }
+
+    /// Creates a new `Library` instance for interacting with library-related methods.
+    pub fn library(&self) -> Library {
+        Library::new(self)
     }
 }

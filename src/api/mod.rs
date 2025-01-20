@@ -3,11 +3,17 @@ use std::fmt;
 mod album;
 mod artist;
 mod auth;
+mod chart;
+mod geo;
+mod library;
 mod parameter_builder;
 
 pub use album::Album;
 pub use artist::Artist;
 pub use auth::Auth;
+pub use chart::Chart;
+pub use geo::Geo;
+pub use library::Library;
 pub use parameter_builder::ParameterBuilder;
 
 #[derive(Debug, Clone)]
