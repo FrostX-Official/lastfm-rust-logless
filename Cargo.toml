@@ -3,7 +3,10 @@ name = "lastfm-rust"
 version = "0.1.0"
 authors = ["uppercase <uppercasee@proton.me>"]
 edition = "2021"
-description = "Last.fm API wrapper for Rust "
+description = "Rust library for accessing the Last.fm API."
+keywords = ["lastfm", "api", "lastfm-api"]
+categories = ["api-bindings"]
+repository = "https://github.com/uppercasee/lastfm-rust"
 license = "MIT"
 
 [dependencies]
