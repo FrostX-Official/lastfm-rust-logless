@@ -3,8 +3,10 @@ use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::api::LastfmMethod;
 use crate::error::{ApiError, Error, Result};
 use crate::Album;
+use crate::Artist;
 use crate::Auth;
 
 pub const LASTFM_API_URL: &str = "http://ws.audioscrobbler.com/2.0/";
@@ -117,24 +119,20 @@ impl Lastfm {
         format!("{:x}", digest)
     }
 
-    pub async fn send_request<T>(
+    pub async fn send_request(
         &self,
-        method: T,
+        method: LastfmMethod,
         params: &mut std::collections::HashMap<String, String>,
         http_method: Method,
-        auth: bool,
-    ) -> Result<Value>
-    where
-        T: Into<String>,
-    {
+    ) -> Result<Value> {
         // TODO: Rate Limiting
         // let rate_limiter = &self.lastfm.rate_limiter;
         // rate_limiter.until_ready().await;
 
-        params.insert("method".to_string(), method.into());
+        params.insert("method".to_string(), method.clone().into());
         params.insert("api_key".to_string(), self.get_api_key());
 
-        if auth {
+        if method.requires_auth() {
             params.insert("sk".to_string(), self.get_sk());
             let api_sig = self.sign_api(params);
             params.insert("api_sig".to_string(), api_sig);
@@ -166,6 +164,12 @@ impl Lastfm {
         Album::new(self)
     }
 
+    /// Creates a new `Artist` instance for interacting with artist-related methods.
+    pub fn artist(&self) -> Artist {
+        Artist::new(self)
+    }
+
+    /// Creates a new `Auth` instance for interacting with artist-related methods.
     pub fn auth(&self) -> Auth {
         Auth::new(self)
     }

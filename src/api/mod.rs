@@ -1,10 +1,12 @@
 use std::fmt;
 
 mod album;
+mod artist;
 mod auth;
 mod parameter_builder;
 
 pub use album::Album;
+pub use artist::Artist;
 pub use auth::Auth;
 pub use parameter_builder::ParameterBuilder;
 
@@ -174,9 +176,14 @@ impl From<LastfmMethod> for String {
     }
 }
 
-// TODO: make this work instead of manually passing auth to every request!
-// impl LastfmMethod {
-//     pub fn requires_auth(&self) -> bool {
-//         matches!(self, LastfmMethod::AlbumRemoveTag)
-//     }
-// }
+impl LastfmMethod {
+    pub fn requires_auth(&self) -> bool {
+        match self {
+            LastfmMethod::AlbumAddTags => true,
+            LastfmMethod::AlbumRemoveTag => true,
+            LastfmMethod::ArtistAddTags => true,
+            LastfmMethod::ArtistRemoveTag => true,
+            _ => false, // default case where methods don't need authentication
+        }
+    }
+}
