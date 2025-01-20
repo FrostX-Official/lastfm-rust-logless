@@ -2,6 +2,7 @@ use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::api::LastfmMethod;
 use crate::{Error, Lastfm, Result};
 
 #[derive(Debug)]
@@ -10,7 +11,7 @@ pub struct AlbumRemoveTag<'a> {
     artist: Option<String>,
     album: Option<String>,
     tag: Option<String>,
-    method: String,
+    method: LastfmMethod,
 }
 
 impl<'a> AlbumRemoveTag<'a> {
@@ -20,7 +21,7 @@ impl<'a> AlbumRemoveTag<'a> {
             artist: None,
             album: None,
             tag: None,
-            method: "album.removeTag".into(),
+            method: LastfmMethod::AlbumRemoveTag,
         }
     }
 
@@ -73,7 +74,7 @@ impl<'a> AlbumRemoveTag<'a> {
 
         let response = self
             .lastfm
-            .send_request(&self.method, &mut params, Method::POST, true)
+            .send_request(self.method, &mut params, Method::POST, true)
             .await?;
 
         Ok(response)

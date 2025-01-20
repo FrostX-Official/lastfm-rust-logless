@@ -2,6 +2,7 @@ use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::api::LastfmMethod;
 use crate::{Lastfm, Result};
 
 // #[derive(Debug, Deserialize)]
@@ -13,14 +14,14 @@ use crate::{Lastfm, Result};
 #[derive(Debug)]
 pub struct AuthGetToken<'a> {
     lastfm: &'a Lastfm,
-    method: String,
+    method: LastfmMethod,
 }
 
 impl<'a> AuthGetToken<'a> {
     pub(crate) fn new(lastfm: &'a Lastfm) -> Self {
         AuthGetToken {
             lastfm,
-            method: "auth.getToken".into(),
+            method: LastfmMethod::AuthGetToken,
         }
     }
 
@@ -36,7 +37,7 @@ impl<'a> AuthGetToken<'a> {
         let mut token_params = self.request_token_params();
         let response = self
             .lastfm
-            .send_request(&self.method, &mut token_params, Method::GET, false)
+            .send_request(self.method, &mut token_params, Method::GET, false)
             .await?;
 
         Ok(response)

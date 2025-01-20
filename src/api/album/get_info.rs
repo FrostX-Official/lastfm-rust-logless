@@ -2,6 +2,7 @@ use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::api::LastfmMethod;
 use crate::{Error, Lastfm, Result};
 
 #[derive(Debug)]
@@ -13,7 +14,7 @@ pub struct AlbumGetInfo<'a> {
     pub autocorrect: Option<bool>,
     pub username: Option<String>,
     pub lang: Option<String>,
-    method: String,
+    method: LastfmMethod,
 }
 
 impl<'a> AlbumGetInfo<'a> {
@@ -26,7 +27,7 @@ impl<'a> AlbumGetInfo<'a> {
             autocorrect: Some(false),
             username: None,
             lang: None,
-            method: "album.getInfo".into(),
+            method: LastfmMethod::AlbumGetInfo,
         }
     }
 
@@ -111,7 +112,7 @@ impl<'a> AlbumGetInfo<'a> {
 
         let response = self
             .lastfm
-            .send_request(&self.method, &mut params, Method::GET, false)
+            .send_request(self.method, &mut params, Method::GET, false)
             .await?;
 
         Ok(response)

@@ -5,15 +5,14 @@ mod get_top_tags;
 mod remove_tags;
 mod search;
 
-pub use add_tags::AlbumAddTagsRequest;
-pub use get_info::AlbumGetInfo;
-pub use get_tags::AlbumGetTags;
-
 use crate::Lastfm;
 
-use self::get_top_tags::AlbumGetTopTags;
-use self::remove_tags::AlbumRemoveTag;
-use self::search::AlbumSearch;
+pub use add_tags::{AlbumAddTagsRequest, WithArtist};
+pub use get_info::AlbumGetInfo;
+pub use get_tags::AlbumGetTags;
+pub use get_top_tags::AlbumGetTopTags;
+pub use remove_tags::AlbumRemoveTag;
+pub use search::AlbumSearch;
 
 /// Represents album-related operations in the Last.fm API.
 #[derive(Debug)]

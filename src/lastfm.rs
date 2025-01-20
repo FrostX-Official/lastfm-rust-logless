@@ -9,7 +9,7 @@ use crate::Auth;
 
 pub const LASTFM_API_URL: &str = "http://ws.audioscrobbler.com/2.0/";
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default)]
 pub struct Lastfm {
     base_url: String,
     api_key: String,
@@ -117,18 +117,18 @@ impl Lastfm {
         format!("{:x}", digest)
     }
 
-    pub async fn send_request(
+    pub async fn send_request<T>(
         &self,
-        method: &str,
+        method: T,
         params: &mut std::collections::HashMap<String, String>,
         http_method: Method,
         auth: bool,
-    ) -> Result<Value> {
+    ) -> Result<Value>  where T:Into<String>{
         // TODO: Rate Limiting
         // let rate_limiter = &self.lastfm.rate_limiter;
         // rate_limiter.until_ready().await;
 
-        params.insert("method".to_string(), method.to_string());
+        params.insert("method".to_string(), method.into());
         params.insert("api_key".to_string(), self.get_api_key());
 
         if auth {

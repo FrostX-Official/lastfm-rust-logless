@@ -2,6 +2,7 @@ use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::api::LastfmMethod;
 use crate::{Error, Lastfm, Result};
 
 // #[derive(Deserialize, Debug)]
@@ -18,13 +19,13 @@ use crate::{Error, Lastfm, Result};
 //     message: String,
 // }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AlbumAddTagsRequest<'a> {
     lastfm: &'a Lastfm,
     artist: Option<String>,
     album: Option<String>,
     tags: Option<String>,
-    method: String,
+    method: LastfmMethod,
 }
 
 // #[derive(Debug)]
@@ -47,7 +48,7 @@ impl<'a> AlbumAddTagsRequest<'a> {
             artist: None,
             album: None,
             tags: None,
-            method: "album.addTags".into(),
+            method: LastfmMethod::AlbumAddTags,
         }
     }
 
@@ -56,13 +57,27 @@ impl<'a> AlbumAddTagsRequest<'a> {
         self
     }
 
-    pub fn album(mut self, album: &str) -> Self {
-        self.album = Some(album.to_string());
+    // pub fn artist<T>(mut self, artist: T) -> Self
+    // where
+    //     T: Into<String>,
+    // {
+    //     self.artist = Some(artist.into());
+    //     self
+    // }
+
+    pub fn album<T>(mut self, album: T) -> Self
+    where
+        T: Into<String>,
+    {
+        self.album = Some(album.into());
         self
     }
 
-    pub fn tags(mut self, tags: &str) -> Self {
-        self.tags = Some(tags.to_string());
+    pub fn tags<T>(mut self, tags: T) -> Self
+    where
+        T: Into<String>,
+    {
+        self.tags = Some(tags.into());
         self
     }
 
@@ -100,7 +115,7 @@ impl<'a> AlbumAddTagsRequest<'a> {
 
         let response = self
             .lastfm
-            .send_request(&self.method, &mut params, Method::POST, true)
+            .send_request(self.method, &mut params, Method::POST, true)
             .await?;
 
         Ok(response)

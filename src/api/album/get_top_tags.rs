@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use reqwest::Method;
 use serde_json::Value;
 
+use crate::api::LastfmMethod;
 use crate::{Error, Lastfm, Result};
 
 #[derive(Debug)]
@@ -12,7 +13,7 @@ pub struct AlbumGetTopTags<'a> {
     pub album: Option<String>,
     pub mbid: Option<String>,
     pub autocorrect: Option<bool>,
-    method: String,
+    method: LastfmMethod,
 }
 
 impl<'a> AlbumGetTopTags<'a> {
@@ -23,7 +24,7 @@ impl<'a> AlbumGetTopTags<'a> {
             album: None,
             mbid: None,
             autocorrect: Some(false),
-            method: "album.getTopTags".into(),
+            method: LastfmMethod::AlbumGetTopTags,
         }
     }
 
@@ -83,7 +84,7 @@ impl<'a> AlbumGetTopTags<'a> {
 
         let response = self
             .lastfm
-            .send_request(&self.method, &mut params, Method::GET, false)
+            .send_request(self.method, &mut params, Method::GET, false)
             .await?;
 
         Ok(response)

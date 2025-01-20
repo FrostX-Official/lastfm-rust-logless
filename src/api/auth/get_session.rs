@@ -1,6 +1,7 @@
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::api::LastfmMethod;
 use crate::error::ApiError;
 use crate::{Error, Lastfm, Result};
 
@@ -21,7 +22,7 @@ use crate::{Error, Lastfm, Result};
 pub struct AuthGetSession<'a> {
     lastfm: &'a Lastfm,
     token: Option<String>,
-    method: String,
+    method: LastfmMethod,
 }
 
 impl<'a> AuthGetSession<'a> {
@@ -29,7 +30,7 @@ impl<'a> AuthGetSession<'a> {
         AuthGetSession {
             lastfm,
             token: None,
-            method: "auth.getSession".into(),
+            method: LastfmMethod::AuthGetSession,
         }
     }
 
