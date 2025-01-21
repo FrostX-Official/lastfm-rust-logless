@@ -220,3 +220,62 @@ impl Lastfm {
         User::new(self)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use reqwest::Client;
+    use std::collections::HashMap;
+
+    fn get_lastfm_instance() -> Lastfm {
+        let client = Client::new();
+        Lastfm::builder()
+            .api_key("test_api_key".to_string())
+            .api_secret("test_api_secret".to_string())
+            .session_key("test_session_key".to_string())
+            .client(client)
+            .build()
+            .unwrap()
+    }
+
+    #[tokio::test]
+    async fn test_get_api_key() {
+        let lastfm = get_lastfm_instance();
+        assert_eq!(lastfm.get_api_key(), "test_api_key");
+    }
+
+    #[tokio::test]
+    async fn test_get_api_secret() {
+        let lastfm = get_lastfm_instance();
+        assert_eq!(lastfm.get_api_secret(), "test_api_secret");
+    }
+
+    #[tokio::test]
+    async fn test_get_base_url() {
+        let lastfm = get_lastfm_instance();
+        assert_eq!(lastfm.get_base_url(), "http://ws.audioscrobbler.com/2.0/");
+    }
+
+    #[tokio::test]
+    async fn test_get_sk() {
+        let lastfm = get_lastfm_instance();
+        assert_eq!(lastfm.get_sk(), "test_session_key");
+    }
+
+    #[tokio::test]
+    async fn test_set_sk() {
+        let mut lastfm = get_lastfm_instance();
+        lastfm.set_sk("new_session_key".to_string());
+        assert_eq!(lastfm.get_sk(), "new_session_key");
+    }
+
+    #[tokio::test]
+    async fn test_sign_api() {
+        let lastfm = get_lastfm_instance();
+        let mut params = HashMap::new();
+        params.insert("method".to_string(), "test_method".to_string());
+        params.insert("api_key".to_string(), lastfm.get_api_key());
+        let signature = lastfm.sign_api(&mut params);
+        assert!(!signature.is_empty());
+    }
+}
