@@ -1,17 +1,9 @@
+use crate::{api::LastfmMethod, APIResponse, Lastfm, Result};
 use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
 
-use crate::api::LastfmMethod;
-use crate::{Lastfm, Result};
-
-// #[derive(Debug, Deserialize)]
-// pub struct TokenResponse {
-//     #[serde(rename = "token")]
-//     pub token: String,
-// }
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AuthGetToken<'a> {
     lastfm: &'a Lastfm,
     method: LastfmMethod,
@@ -33,7 +25,7 @@ impl<'a> AuthGetToken<'a> {
         params
     }
 
-    pub async fn send(self) -> Result<Value> {
+    pub async fn send(self) -> Result<APIResponse<Value>> {
         let mut token_params = self.request_token_params();
         let response = self
             .lastfm

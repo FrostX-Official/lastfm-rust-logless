@@ -1,10 +1,11 @@
+use crate::{
+    api::{LastfmMethod, ParameterBuilder},
+    APIResponse, Lastfm, Result,
+};
 use reqwest::Method;
 use serde_json::Value;
 
-use crate::api::{LastfmMethod, ParameterBuilder};
-use crate::{Lastfm, Result};
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TagGetTopTags<'a> {
     lastfm: &'a Lastfm,
     method: LastfmMethod,
@@ -18,7 +19,7 @@ impl<'a> TagGetTopTags<'a> {
         }
     }
 
-    pub async fn send(self) -> Result<Value> {
+    pub async fn send(self) -> Result<APIResponse<Value>> {
         let builder = ParameterBuilder::new();
 
         let mut params = builder.build();

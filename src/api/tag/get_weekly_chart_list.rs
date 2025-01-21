@@ -1,10 +1,11 @@
+use crate::{
+    api::{LastfmMethod, ParameterBuilder},
+    APIResponse, Lastfm, Result,
+};
 use reqwest::Method;
 use serde_json::Value;
 
-use crate::api::{LastfmMethod, ParameterBuilder};
-use crate::{Lastfm, Result};
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TagGetWeeklyChartList<'a> {
     lastfm: &'a Lastfm,
     pub tag: Option<String>,
@@ -29,7 +30,7 @@ impl<'a> TagGetWeeklyChartList<'a> {
         Ok(())
     }
 
-    pub async fn send(self) -> Result<Value> {
+    pub async fn send(self) -> Result<APIResponse<Value>> {
         self.validate()?;
 
         let mut builder = ParameterBuilder::new();

@@ -1,8 +1,10 @@
 use reqwest::Client as ReqwestClient;
 use reqwest::Method;
+use serde::Deserialize;
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::APIResponse;
 use crate::{
     api::{Chart, Geo, LastfmMethod, Library, Tag, Track, User},
     error::{ApiError, Error, Result},
@@ -119,44 +121,58 @@ impl Lastfm {
         format!("{:x}", digest)
     }
 
-    pub async fn send_request(
+    async fn send_http_request(
         &self,
-        method: LastfmMethod,
-        params: &mut std::collections::HashMap<String, String>,
+        params: &mut HashMap<String, String>,
         http_method: Method,
     ) -> Result<Value> {
-        // TODO: Rate Limiting
-        // let rate_limiter = &self.lastfm.rate_limiter;
-        // rate_limiter.until_ready().await;
+        let url = self.get_base_url();
 
+        let client = self.get_client();
+        let response = match http_method {
+            Method::GET => client.get(url).query(&params).send().await?,
+            Method::POST => client.post(url).form(&params).send().await?,
+            _ => return Err(Error::Generic("Unsupported HTTP method".to_string())),
+        };
+
+        let json_response: Value = response.json().await?;
+        Ok(json_response)
+    }
+
+    // This function processes the response and returns either Success or Error
+    async fn process_response<T>(&self, json_response: Value) -> Result<APIResponse<T>>
+    where
+        T: for<'de> Deserialize<'de>,
+    {
+        if json_response.get("error").is_some() {
+            let api_error: ApiError = serde_json::from_value(json_response)?;
+            return Ok(APIResponse::Error(api_error));
+        }
+
+        let response_data: T = serde_json::from_value(json_response)?;
+        Ok(APIResponse::Success(response_data))
+    }
+
+    pub async fn send_request<T>(
+        &self,
+        method: LastfmMethod,
+        params: &mut HashMap<String, String>,
+        http_method: Method,
+    ) -> Result<APIResponse<T>>
+    where
+        T: for<'de> Deserialize<'de>,
+    {
         params.insert("method".to_string(), method.clone().into());
         params.insert("api_key".to_string(), self.get_api_key());
-
         if method.requires_auth() {
             params.insert("sk".to_string(), self.get_sk());
             let api_sig = self.sign_api(params);
             params.insert("api_sig".to_string(), api_sig);
         }
-
         params.insert("format".to_string(), "json".to_string());
-        // println!("PARAMS: {:?}", params);
 
-        let url = self.get_base_url();
-
-        let response = match http_method {
-            Method::GET => self.get_client().get(url).query(&params).send().await?,
-            Method::POST => self.get_client().post(url).form(&params).send().await?,
-            _ => return Err(Error::Generic("Unsupported HTTP method".to_string())),
-        };
-
-        let json_response: Value = response.json().await?;
-
-        if json_response.get("error").is_some() {
-            let api_error: ApiError = serde_json::from_value(json_response)?;
-            return Err(Error::ApiError(api_error));
-        }
-
-        Ok(json_response)
+        let json_response = self.send_http_request(params, http_method).await?;
+        self.process_response(json_response).await
     }
 
     /// Creates a new `Album` instance for interacting with album-related methods.

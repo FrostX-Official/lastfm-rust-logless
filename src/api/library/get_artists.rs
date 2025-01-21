@@ -1,10 +1,11 @@
+use crate::{
+    api::{LastfmMethod, ParameterBuilder},
+    APIResponse, Lastfm, Result,
+};
 use reqwest::Method;
 use serde_json::Value;
 
-use crate::api::{LastfmMethod, ParameterBuilder};
-use crate::{Lastfm, Result};
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LibraryGetArtists<'a> {
     lastfm: &'a Lastfm,
     pub user: Option<String>,
@@ -47,7 +48,7 @@ impl<'a> LibraryGetArtists<'a> {
     }
 
     /// Sends the request and retrieves the top artists for the country.
-    pub async fn send(self) -> Result<Value> {
+    pub async fn send(self) -> Result<APIResponse<Value>> {
         self.validate()?;
 
         let mut builder = ParameterBuilder::new();

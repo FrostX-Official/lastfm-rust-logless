@@ -1,22 +1,9 @@
+use crate::{
+    api::{LastfmMethod, ParameterBuilder},
+    APIResponse, Error, Lastfm, Result,
+};
 use reqwest::Method;
 use serde_json::Value;
-
-use crate::api::{LastfmMethod, ParameterBuilder};
-use crate::{Error, Lastfm, Result};
-
-// #[derive(Deserialize, Debug)]
-// struct LfmErrorResponse {
-//     status: String,
-//     #[serde(rename = "error")]
-//     error: LfmError,
-// }
-//
-// #[derive(Deserialize, Debug)]
-// struct LfmError {
-//     code: u32,
-//     #[serde(rename = "$value")]
-//     message: String,
-// }
 
 #[derive(Debug, Clone)]
 pub struct AlbumAddTagsRequest<'a> {
@@ -26,19 +13,6 @@ pub struct AlbumAddTagsRequest<'a> {
     tags: Option<String>,
     method: LastfmMethod,
 }
-
-// #[derive(Debug)]
-// pub struct FullResponse {
-//     pub status: reqwest::StatusCode,
-//     pub response: Response,
-// }
-
-// #[derive(Debug)]
-// pub struct ApiResponse<T> {
-//     pub data: T,
-//     pub status: u16,
-//     pub headers: HeaderMap,
-// }
 
 impl<'a> AlbumAddTagsRequest<'a> {
     pub fn new(lastfm: &'a Lastfm) -> Self {
@@ -102,7 +76,7 @@ impl<'a> AlbumAddTagsRequest<'a> {
         Ok(())
     }
 
-    pub async fn send(self) -> Result<Value> {
+    pub async fn send(self) -> Result<APIResponse<Value>> {
         self.validate()?;
         let mut builder = ParameterBuilder::new();
 
