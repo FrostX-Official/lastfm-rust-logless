@@ -1,6 +1,6 @@
 use crate::{
     api::{LastfmMethod, ParameterBuilder},
-    APIResponse, Error, Lastfm, Result,
+    APIResponse, Lastfm, Result,
 };
 use reqwest::Method;
 use serde_json::Value;
@@ -8,73 +8,96 @@ use serde_json::Value;
 #[derive(Debug, Clone)]
 pub struct TrackUpdateNowPlaying<'a> {
     lastfm: &'a Lastfm,
-    artist: Option<String>,
-    tags: Option<String>,
+    pub artist: Option<String>,
+    pub track: Option<String>,
+    pub album: Option<String>,
+    pub track_number: Option<String>,
+    pub context: Option<String>,
+    pub mbid: Option<String>,
+    pub duration: Option<String>,
+    pub album_artist: Option<String>,
     method: LastfmMethod,
 }
 
 impl<'a> TrackUpdateNowPlaying<'a> {
-    pub fn new(lastfm: &'a Lastfm) -> Self {
+    pub(crate) fn new(lastfm: &'a Lastfm) -> Self {
         TrackUpdateNowPlaying {
             lastfm,
             artist: None,
-            tags: None,
+            track: None,
+            album: None,
+            track_number: None,
+            context: None,
+            mbid: None,
+            duration: None,
+            album_artist: None,
             method: LastfmMethod::TrackUpdateNowPlaying,
         }
     }
-
-    pub fn artist<T>(mut self, artist: T) -> Self
-    where
-        T: Into<String>,
-    {
-        self.artist = Some(artist.into());
+    pub fn artist(mut self, artist: &str) -> Self {
+        self.artist = Some(artist.to_string());
         self
     }
 
-    pub fn tags<T>(mut self, tags: T) -> Self
-    where
-        T: Into<String>,
-    {
-        self.tags = Some(tags.into());
+    pub fn track(mut self, track: &str) -> Self {
+        self.track = Some(track.to_string());
+        self
+    }
+
+    pub fn album(mut self, album: &str) -> Self {
+        self.album = Some(album.to_string());
+        self
+    }
+
+    pub fn track_number(mut self, track_number: &str) -> Self {
+        self.track_number = Some(track_number.to_string());
+        self
+    }
+
+    pub fn context(mut self, context: &str) -> Self {
+        self.context = Some(context.to_string());
+        self
+    }
+
+    pub fn mbid(mut self, mbid: &str) -> Self {
+        self.mbid = Some(mbid.to_string());
+        self
+    }
+
+    pub fn duration(mut self, duration: &str) -> Self {
+        self.duration = Some(duration.to_string());
+        self
+    }
+
+    pub fn album_artist(mut self, album_artist: &str) -> Self {
+        self.album_artist = Some(album_artist.to_string());
         self
     }
 
     fn validate(&self) -> Result<()> {
-        if self.artist.is_none() {
-            return Err(Error::Generic("Field 'artist' is required.".to_string()));
-        }
-
-        if self.tags.is_none() {
-            return Err(Error::Generic("Field 'tags' is required.".to_string()));
-        }
-
-        let tag_count = self
-            .tags
-            .as_ref()
-            .unwrap()
-            .split(',')
-            .collect::<Vec<_>>()
-            .len();
-        if tag_count > 10 {
-            return Err(Error::Generic("Cannot exceed 10 tags.".to_string()));
-        }
-
         Ok(())
     }
 
     pub async fn send(self) -> Result<APIResponse<Value>> {
         self.validate()?;
+
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add("artist", self.artist.expect("The artist name is required!"))
-            .add_optional("tags", self.tags);
+            .add_optional("artist", self.artist)
+            .add_optional("track", self.track)
+            .add_optional("album", self.album)
+            .add_optional("trackNumber", self.track_number)
+            .add_optional("context", self.context)
+            .add_optional("mbid", self.mbid)
+            .add_optional("duration", self.duration)
+            .add_optional("albumArtist", self.album_artist);
 
         let mut params = builder.build();
 
         let response = self
             .lastfm
-            .send_request(self.method, &mut params, Method::POST)
+            .send_request(self.method, &mut params, Method::GET)
             .await?;
 
         Ok(response)

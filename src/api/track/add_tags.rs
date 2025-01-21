@@ -9,6 +9,7 @@ use serde_json::Value;
 pub struct TrackAddTags<'a> {
     lastfm: &'a Lastfm,
     artist: Option<String>,
+    track: Option<String>,
     tags: Option<String>,
     method: LastfmMethod,
 }
@@ -18,6 +19,7 @@ impl<'a> TrackAddTags<'a> {
         TrackAddTags {
             lastfm,
             artist: None,
+            track: None,
             tags: None,
             method: LastfmMethod::TrackAddTags,
         }
@@ -28,6 +30,14 @@ impl<'a> TrackAddTags<'a> {
         T: Into<String>,
     {
         self.artist = Some(artist.into());
+        self
+    }
+
+    pub fn track<T>(mut self, track: T) -> Self
+    where
+        T: Into<String>,
+    {
+        self.track = Some(track.into());
         self
     }
 
@@ -42,6 +52,10 @@ impl<'a> TrackAddTags<'a> {
     fn validate(&self) -> Result<()> {
         if self.artist.is_none() {
             return Err(Error::Generic("Field 'artist' is required.".to_string()));
+        }
+
+        if self.track.is_none() {
+            return Err(Error::Generic("Field 'track' is required.".to_string()));
         }
 
         if self.tags.is_none() {
@@ -68,7 +82,8 @@ impl<'a> TrackAddTags<'a> {
 
         builder = builder
             .add("artist", self.artist.expect("The artist name is required!"))
-            .add_optional("tags", self.tags);
+            .add("track", self.track.expect("The track name is required!"))
+            .add("tags", self.tags.expect("The tags are required!"));
 
         let mut params = builder.build();
 

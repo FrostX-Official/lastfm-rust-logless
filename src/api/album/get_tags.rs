@@ -1,9 +1,8 @@
 use crate::{
     api::{LastfmMethod, ParameterBuilder},
-    APIResponse, Error, Lastfm, Result,
+    APIResponse, AlbumGetTagsResponse, Error, Lastfm, Result,
 };
 use reqwest::Method;
-use serde_json::Value;
 
 #[derive(Debug, Clone)]
 pub struct AlbumGetTags<'a> {
@@ -70,7 +69,7 @@ impl<'a> AlbumGetTags<'a> {
     }
 
     /// Sends the request and retrieves the tags for the album.
-    pub async fn send(self) -> Result<APIResponse<Value>> {
+    pub async fn send(self) -> Result<APIResponse<AlbumGetTagsResponse>> {
         self.validate()?;
 
         let mut builder = ParameterBuilder::new();

@@ -9,6 +9,7 @@ use serde_json::Value;
 pub struct GeoGetTopTracks<'a> {
     lastfm: &'a Lastfm,
     pub country: Option<String>,
+    pub location: Option<String>,
     pub limit: Option<i64>,
     pub page: Option<i64>,
     method: LastfmMethod,
@@ -19,6 +20,7 @@ impl<'a> GeoGetTopTracks<'a> {
         GeoGetTopTracks {
             lastfm,
             country: None,
+            location: None,
             limit: None,
             page: None,
             method: LastfmMethod::GeoGetTopTracks,
@@ -27,6 +29,11 @@ impl<'a> GeoGetTopTracks<'a> {
 
     pub fn country(mut self, country: String) -> Self {
         self.country = Some(country);
+        self
+    }
+
+    pub fn location(mut self, location: String) -> Self {
+        self.location = Some(location);
         self
     }
 
@@ -58,6 +65,7 @@ impl<'a> GeoGetTopTracks<'a> {
                 "country",
                 self.country.expect("The country name is required!"),
             )
+            .add_optional("location", self.location)
             .add_optional("limit", self.limit.map(|b| b.to_string()))
             .add_optional("page", self.page.map(|b| b.to_string()));
 

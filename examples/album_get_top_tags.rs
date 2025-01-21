@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use lastfm_rust::Lastfm;
+use lastfm_rust::{APIResponse, Lastfm};
 use std::error::Error;
 
 #[tokio::main]
@@ -22,7 +22,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .send()
         .await?;
 
-    println!("{response}");
+    match response {
+        APIResponse::Success(value) => {
+            println!("{:?}", value);
+        }
+        APIResponse::Error(err) => {
+            println!("Error: {} - {}", err.error, err.message);
+        }
+    }
 
     Ok(())
 }

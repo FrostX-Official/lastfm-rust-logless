@@ -54,7 +54,7 @@ impl<'a> LibraryGetArtists<'a> {
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add("user", self.user.expect("The user name is required!"))
+            .add("user", self.user.expect("The user is required!"))
             .add_optional("limit", self.limit.map(|b| b.to_string()))
             .add_optional("page", self.page.map(|b| b.to_string()));
 

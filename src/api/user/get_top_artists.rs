@@ -8,11 +8,10 @@ use serde_json::Value;
 #[derive(Debug, Clone)]
 pub struct UserGetTopArtists<'a> {
     lastfm: &'a Lastfm,
-    pub artist: Option<String>,
-    pub mbid: Option<String>,
-    pub autocorrect: Option<bool>,
-    pub username: Option<String>,
-    pub lang: Option<String>,
+    pub user: Option<String>,
+    pub period: Option<String>,
+    pub limit: Option<u32>,
+    pub page: Option<u32>,
     method: LastfmMethod,
 }
 
@@ -20,45 +19,37 @@ impl<'a> UserGetTopArtists<'a> {
     pub(crate) fn new(lastfm: &'a Lastfm) -> Self {
         UserGetTopArtists {
             lastfm,
-            artist: None,
-            mbid: None,
-            autocorrect: Some(false),
-            username: None,
-            lang: None,
+            user: None,
+            period: None,
+            limit: Some(50),
+            page: Some(1),
             method: LastfmMethod::UserGetTopArtists,
         }
     }
 
-    pub fn artist(mut self, artist: &str) -> Self {
-        self.artist = Some(artist.to_string());
+    pub fn user(mut self, user: &str) -> Self {
+        self.user = Some(user.to_string());
         self
     }
 
-    pub fn mbid(mut self, mbid: &str) -> Self {
-        self.mbid = Some(mbid.to_string());
+    pub fn period(mut self, period: &str) -> Self {
+        self.period = Some(period.to_string());
         self
     }
 
-    pub fn username(mut self, username: &str) -> Self {
-        self.username = Some(username.to_string());
+    pub fn limit(mut self, limit: u32) -> Self {
+        self.limit = Some(limit);
         self
     }
 
-    pub fn lang(mut self, lang: &str) -> Self {
-        self.lang = Some(lang.to_string());
-        self
-    }
-
-    pub fn autocorrect(mut self, autocorrect: bool) -> Self {
-        self.autocorrect = Some(autocorrect);
+    pub fn page(mut self, page: u32) -> Self {
+        self.page = Some(page);
         self
     }
 
     fn validate(&self) -> Result<()> {
-        if self.mbid.is_none() && (self.artist.is_none()) {
-            return Err(Error::Generic(
-                "Either 'mbid' or 'artist' must be provided.".to_string(),
-            ));
+        if self.user.is_none() {
+            return Err(Error::Generic("Username is required.".to_string()));
         }
         Ok(())
     }
@@ -69,11 +60,10 @@ impl<'a> UserGetTopArtists<'a> {
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add_optional("artist", self.artist)
-            .add_optional("mbid", self.mbid)
-            .add_optional("username", self.username)
-            .add_optional("lang", self.lang)
-            .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
+            .add_optional("user", self.user)
+            .add_optional("period", self.period)
+            .add_optional("limit", self.limit.map(|l| l.to_string()))
+            .add_optional("page", self.page.map(|p| p.to_string()));
 
         let mut params = builder.build();
 

@@ -9,6 +9,7 @@ use serde_json::Value;
 pub struct TrackGetSimilar<'a> {
     lastfm: &'a Lastfm,
     pub artist: Option<String>,
+    pub track: Option<String>,
     pub mbid: Option<String>,
     pub autocorrect: Option<bool>,
     pub limit: Option<i64>,
@@ -20,6 +21,7 @@ impl<'a> TrackGetSimilar<'a> {
         TrackGetSimilar {
             lastfm,
             artist: None,
+            track: None,
             mbid: None,
             limit: None,
             autocorrect: Some(false),
@@ -29,6 +31,11 @@ impl<'a> TrackGetSimilar<'a> {
 
     pub fn artist(mut self, artist: &str) -> Self {
         self.artist = Some(artist.to_string());
+        self
+    }
+
+    pub fn track(mut self, track: &str) -> Self {
+        self.track = Some(track.to_string());
         self
     }
 
@@ -63,6 +70,7 @@ impl<'a> TrackGetSimilar<'a> {
 
         builder = builder
             .add_optional("artist", self.artist)
+            .add_optional("track", self.track)
             .add_optional("mbid", self.mbid)
             .add_optional("limit", self.limit.map(|b| b.to_string()))
             .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));

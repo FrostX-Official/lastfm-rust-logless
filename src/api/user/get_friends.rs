@@ -1,6 +1,6 @@
 use crate::{
     api::{LastfmMethod, ParameterBuilder},
-    APIResponse, Error, Lastfm, Result,
+    APIResponse, Lastfm, Result,
 };
 use reqwest::Method;
 use serde_json::Value;
@@ -8,11 +8,10 @@ use serde_json::Value;
 #[derive(Debug, Clone)]
 pub struct UserGetFriends<'a> {
     lastfm: &'a Lastfm,
-    pub artist: Option<String>,
-    pub mbid: Option<String>,
-    pub autocorrect: Option<bool>,
-    pub username: Option<String>,
-    pub lang: Option<String>,
+    pub user: Option<String>,
+    pub recenttracks: Option<String>,
+    pub limit: Option<String>,
+    pub page: Option<String>,
     method: LastfmMethod,
 }
 
@@ -20,46 +19,35 @@ impl<'a> UserGetFriends<'a> {
     pub(crate) fn new(lastfm: &'a Lastfm) -> Self {
         UserGetFriends {
             lastfm,
-            artist: None,
-            mbid: None,
-            autocorrect: Some(false),
-            username: None,
-            lang: None,
+            user: None,
+            recenttracks: None,
+            limit: None,
+            page: None,
             method: LastfmMethod::UserGetFriends,
         }
     }
 
-    pub fn artist(mut self, artist: &str) -> Self {
-        self.artist = Some(artist.to_string());
+    pub fn user(mut self, user: &str) -> Self {
+        self.user = Some(user.to_string());
         self
     }
 
-    pub fn mbid(mut self, mbid: &str) -> Self {
-        self.mbid = Some(mbid.to_string());
+    pub fn recenttracks(mut self, recenttracks: &str) -> Self {
+        self.recenttracks = Some(recenttracks.to_string());
         self
     }
 
-    pub fn username(mut self, username: &str) -> Self {
-        self.username = Some(username.to_string());
+    pub fn page(mut self, page: &str) -> Self {
+        self.page = Some(page.to_string());
         self
     }
 
-    pub fn lang(mut self, lang: &str) -> Self {
-        self.lang = Some(lang.to_string());
-        self
-    }
-
-    pub fn autocorrect(mut self, autocorrect: bool) -> Self {
-        self.autocorrect = Some(autocorrect);
+    pub fn limit(mut self, limit: bool) -> Self {
+        self.limit = Some(limit.to_string());
         self
     }
 
     fn validate(&self) -> Result<()> {
-        if self.mbid.is_none() && (self.artist.is_none()) {
-            return Err(Error::Generic(
-                "Either 'mbid' or 'artist' must be provided.".to_string(),
-            ));
-        }
         Ok(())
     }
 
@@ -69,11 +57,10 @@ impl<'a> UserGetFriends<'a> {
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add_optional("artist", self.artist)
-            .add_optional("mbid", self.mbid)
-            .add_optional("username", self.username)
-            .add_optional("lang", self.lang)
-            .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
+            .add_optional("user", self.user)
+            .add_optional("recenttracks", self.recenttracks)
+            .add_optional("limit", self.limit)
+            .add_optional("page", self.page);
 
         let mut params = builder.build();
 

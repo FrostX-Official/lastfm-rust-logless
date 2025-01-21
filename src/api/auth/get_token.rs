@@ -1,6 +1,6 @@
+use crate::AuthGetTokenResponse;
 use crate::{api::LastfmMethod, APIResponse, Lastfm, Result};
 use reqwest::Method;
-use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -25,7 +25,7 @@ impl<'a> AuthGetToken<'a> {
         params
     }
 
-    pub async fn send(self) -> Result<APIResponse<Value>> {
+    pub async fn send(self) -> Result<APIResponse<AuthGetTokenResponse>> {
         let mut token_params = self.request_token_params();
         let response = self
             .lastfm

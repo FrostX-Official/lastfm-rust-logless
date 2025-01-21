@@ -8,9 +8,8 @@ use serde_json::Value;
 #[derive(Debug, Clone)]
 pub struct UserGetTopTags<'a> {
     lastfm: &'a Lastfm,
-    pub artist: Option<String>,
-    pub mbid: Option<String>,
-    pub autocorrect: Option<bool>,
+    pub user: Option<String>,
+    pub limit: Option<u32>,
     method: LastfmMethod,
 }
 
@@ -18,33 +17,25 @@ impl<'a> UserGetTopTags<'a> {
     pub(crate) fn new(lastfm: &'a Lastfm) -> Self {
         UserGetTopTags {
             lastfm,
-            artist: None,
-            mbid: None,
-            autocorrect: Some(false),
+            user: None,
+            limit: Some(50),
             method: LastfmMethod::UserGetTopTags,
         }
     }
 
-    pub fn artist(mut self, artist: &str) -> Self {
-        self.artist = Some(artist.to_string());
+    pub fn user(mut self, user: &str) -> Self {
+        self.user = Some(user.to_string());
         self
     }
 
-    pub fn mbid(mut self, mbid: &str) -> Self {
-        self.mbid = Some(mbid.to_string());
-        self
-    }
-
-    pub fn autocorrect(mut self, autocorrect: bool) -> Self {
-        self.autocorrect = Some(autocorrect);
+    pub fn limit(mut self, limit: u32) -> Self {
+        self.limit = Some(limit);
         self
     }
 
     fn validate(&self) -> Result<()> {
-        if self.mbid.is_none() && (self.artist.is_none()) {
-            return Err(Error::Generic(
-                "Either 'mbid' or 'artist' must be provided.".to_string(),
-            ));
+        if self.user.is_none() {
+            return Err(Error::Generic("Username is required.".to_string()));
         }
         Ok(())
     }
@@ -55,9 +46,8 @@ impl<'a> UserGetTopTags<'a> {
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add("artist", self.artist.expect("The artist name is required!"))
-            .add_optional("mbid", self.mbid)
-            .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
+            .add_optional("user", self.user)
+            .add_optional("limit", self.limit.map(|l| l.to_string()));
 
         let mut params = builder.build();
 

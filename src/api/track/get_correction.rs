@@ -9,7 +9,7 @@ use serde_json::Value;
 pub struct TrackGetCorrection<'a> {
     lastfm: &'a Lastfm,
     artist: Option<String>,
-    tags: Option<String>,
+    track: Option<String>,
     method: LastfmMethod,
 }
 
@@ -18,7 +18,7 @@ impl<'a> TrackGetCorrection<'a> {
         TrackGetCorrection {
             lastfm,
             artist: None,
-            tags: None,
+            track: None,
             method: LastfmMethod::TrackGetCorrection,
         }
     }
@@ -31,11 +31,11 @@ impl<'a> TrackGetCorrection<'a> {
         self
     }
 
-    pub fn tags<T>(mut self, tags: T) -> Self
+    pub fn track<T>(mut self, track: T) -> Self
     where
         T: Into<String>,
     {
-        self.tags = Some(tags.into());
+        self.track = Some(track.into());
         self
     }
 
@@ -44,19 +44,8 @@ impl<'a> TrackGetCorrection<'a> {
             return Err(Error::Generic("Field 'artist' is required.".to_string()));
         }
 
-        if self.tags.is_none() {
-            return Err(Error::Generic("Field 'tags' is required.".to_string()));
-        }
-
-        let tag_count = self
-            .tags
-            .as_ref()
-            .unwrap()
-            .split(',')
-            .collect::<Vec<_>>()
-            .len();
-        if tag_count > 10 {
-            return Err(Error::Generic("Cannot exceed 10 tags.".to_string()));
+        if self.track.is_none() {
+            return Err(Error::Generic("Field 'track' is required.".to_string()));
         }
 
         Ok(())
@@ -68,7 +57,7 @@ impl<'a> TrackGetCorrection<'a> {
 
         builder = builder
             .add("artist", self.artist.expect("The artist name is required!"))
-            .add_optional("tags", self.tags);
+            .add("track", self.track.expect("The track name is required!"));
 
         let mut params = builder.build();
 

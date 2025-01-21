@@ -9,6 +9,7 @@ use serde_json::Value;
 pub struct TrackGetTopTags<'a> {
     lastfm: &'a Lastfm,
     pub artist: Option<String>,
+    pub track: Option<String>,
     pub mbid: Option<String>,
     pub autocorrect: Option<bool>,
     method: LastfmMethod,
@@ -19,6 +20,7 @@ impl<'a> TrackGetTopTags<'a> {
         TrackGetTopTags {
             lastfm,
             artist: None,
+            track: None,
             mbid: None,
             autocorrect: Some(false),
             method: LastfmMethod::TrackGetTopTags,
@@ -27,6 +29,11 @@ impl<'a> TrackGetTopTags<'a> {
 
     pub fn artist(mut self, artist: &str) -> Self {
         self.artist = Some(artist.to_string());
+        self
+    }
+
+    pub fn track(mut self, track: &str) -> Self {
+        self.track = Some(track.to_string());
         self
     }
 
@@ -56,6 +63,7 @@ impl<'a> TrackGetTopTags<'a> {
 
         builder = builder
             .add("artist", self.artist.expect("The artist name is required!"))
+            .add("track", self.track.expect("The track name is required!"))
             .add_optional("mbid", self.mbid)
             .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
 

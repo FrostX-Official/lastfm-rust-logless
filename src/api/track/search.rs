@@ -9,6 +9,7 @@ use serde_json::Value;
 pub struct TrackSearch<'a> {
     lastfm: &'a Lastfm,
     pub artist: Option<String>,
+    pub track: Option<String>,
     pub limit: Option<i64>,
     pub page: Option<i64>,
     method: LastfmMethod,
@@ -19,6 +20,7 @@ impl<'a> TrackSearch<'a> {
         TrackSearch {
             lastfm,
             artist: None,
+            track: None,
             limit: None,
             page: None,
             method: LastfmMethod::TrackSearch,
@@ -27,6 +29,11 @@ impl<'a> TrackSearch<'a> {
 
     pub fn artist(mut self, artist: &str) -> Self {
         self.artist = Some(artist.to_string());
+        self
+    }
+
+    pub fn track(mut self, track: &str) -> Self {
+        self.track = Some(track.to_string());
         self
     }
 
@@ -54,7 +61,8 @@ impl<'a> TrackSearch<'a> {
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add("artist", self.artist.expect("The artist name is required!"))
+            .add("track", self.track.expect("The track name is required!"))
+            .add_optional("artist", self.artist)
             .add_optional("limit", self.limit.map(|b| b.to_string()))
             .add_optional("page", self.page.map(|b| b.to_string()));
 

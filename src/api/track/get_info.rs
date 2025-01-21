@@ -9,10 +9,10 @@ use serde_json::Value;
 pub struct TrackGetInfo<'a> {
     lastfm: &'a Lastfm,
     pub artist: Option<String>,
+    pub track: Option<String>,
     pub mbid: Option<String>,
     pub autocorrect: Option<bool>,
     pub username: Option<String>,
-    pub lang: Option<String>,
     method: LastfmMethod,
 }
 
@@ -21,16 +21,21 @@ impl<'a> TrackGetInfo<'a> {
         TrackGetInfo {
             lastfm,
             artist: None,
+            track: None,
             mbid: None,
             autocorrect: Some(false),
             username: None,
-            lang: None,
             method: LastfmMethod::TrackGetInfo,
         }
     }
 
     pub fn artist(mut self, artist: &str) -> Self {
         self.artist = Some(artist.to_string());
+        self
+    }
+
+    pub fn track(mut self, track: &str) -> Self {
+        self.track = Some(track.to_string());
         self
     }
 
@@ -41,11 +46,6 @@ impl<'a> TrackGetInfo<'a> {
 
     pub fn username(mut self, username: &str) -> Self {
         self.username = Some(username.to_string());
-        self
-    }
-
-    pub fn lang(mut self, lang: &str) -> Self {
-        self.lang = Some(lang.to_string());
         self
     }
 
@@ -70,9 +70,9 @@ impl<'a> TrackGetInfo<'a> {
 
         builder = builder
             .add_optional("artist", self.artist)
+            .add_optional("track", self.track)
             .add_optional("mbid", self.mbid)
             .add_optional("username", self.username)
-            .add_optional("lang", self.lang)
             .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
 
         let mut params = builder.build();

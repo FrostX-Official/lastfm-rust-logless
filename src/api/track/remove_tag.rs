@@ -9,6 +9,7 @@ use serde_json::Value;
 pub struct TrackRemoveTag<'a> {
     lastfm: &'a Lastfm,
     artist: Option<String>,
+    track: Option<String>,
     tag: Option<String>,
     method: LastfmMethod,
 }
@@ -18,6 +19,7 @@ impl<'a> TrackRemoveTag<'a> {
         TrackRemoveTag {
             lastfm,
             artist: None,
+            track: None,
             tag: None,
             method: LastfmMethod::TrackRemoveTag,
         }
@@ -25,6 +27,11 @@ impl<'a> TrackRemoveTag<'a> {
 
     pub fn artist(mut self, artist: &str) -> Self {
         self.artist = Some(artist.to_string());
+        self
+    }
+
+    pub fn track(mut self, track: &str) -> Self {
+        self.track = Some(track.to_string());
         self
     }
 
@@ -39,7 +46,7 @@ impl<'a> TrackRemoveTag<'a> {
         }
 
         if self.tag.is_none() {
-            return Err(Error::Generic("Field 'tags' is required.".to_string()));
+            return Err(Error::Generic("Field 'tag' is required.".to_string()));
         }
 
         let tag_count = self
@@ -65,6 +72,7 @@ impl<'a> TrackRemoveTag<'a> {
 
         builder = builder
             .add("artist", self.artist.unwrap())
+            .add("track", self.track.unwrap())
             .add("tag", self.tag.unwrap());
 
         let mut params = builder.build();

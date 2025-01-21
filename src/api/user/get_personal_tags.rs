@@ -8,11 +8,12 @@ use serde_json::Value;
 #[derive(Debug, Clone)]
 pub struct UserGetPersonalTags<'a> {
     lastfm: &'a Lastfm,
-    pub artist: Option<String>,
-    pub mbid: Option<String>,
-    pub autocorrect: Option<bool>,
-    pub username: Option<String>,
-    pub lang: Option<String>,
+    pub user: Option<String>,
+    pub tag: Option<String>,
+    //TODO: make an enum to store tagging type
+    pub taggingtype: Option<String>,
+    pub limit: Option<String>,
+    pub page: Option<String>,
     method: LastfmMethod,
 }
 
@@ -20,42 +21,37 @@ impl<'a> UserGetPersonalTags<'a> {
     pub(crate) fn new(lastfm: &'a Lastfm) -> Self {
         UserGetPersonalTags {
             lastfm,
-            artist: None,
-            mbid: None,
-            autocorrect: Some(false),
-            username: None,
-            lang: None,
+            user: None,
+            tag: None,
+            taggingtype: None,
+            limit: None,
+            page: None,
             method: LastfmMethod::UserGetPersonalTags,
         }
     }
 
-    pub fn artist(mut self, artist: &str) -> Self {
-        self.artist = Some(artist.to_string());
+    pub fn user(mut self, user: &str) -> Self {
+        self.user = Some(user.to_string());
         self
     }
 
-    pub fn mbid(mut self, mbid: &str) -> Self {
-        self.mbid = Some(mbid.to_string());
+    pub fn tag(mut self, tag: &str) -> Self {
+        self.tag = Some(tag.to_string());
         self
     }
 
-    pub fn username(mut self, username: &str) -> Self {
-        self.username = Some(username.to_string());
+    pub fn limit(mut self, limit: &str) -> Self {
+        self.limit = Some(limit.to_string());
         self
     }
 
-    pub fn lang(mut self, lang: &str) -> Self {
-        self.lang = Some(lang.to_string());
-        self
-    }
-
-    pub fn autocorrect(mut self, autocorrect: bool) -> Self {
-        self.autocorrect = Some(autocorrect);
+    pub fn page(mut self, page: &str) -> Self {
+        self.page = Some(page.to_string());
         self
     }
 
     fn validate(&self) -> Result<()> {
-        if self.mbid.is_none() && (self.artist.is_none()) {
+        if self.tag.is_none() && (self.user.is_none()) {
             return Err(Error::Generic(
                 "Either 'mbid' or 'artist' must be provided.".to_string(),
             ));
@@ -69,11 +65,11 @@ impl<'a> UserGetPersonalTags<'a> {
         let mut builder = ParameterBuilder::new();
 
         builder = builder
-            .add_optional("artist", self.artist)
-            .add_optional("mbid", self.mbid)
-            .add_optional("username", self.username)
-            .add_optional("lang", self.lang)
-            .add_optional("autocorrect", self.autocorrect.map(|b| b.to_string()));
+            .add_optional("user", self.user)
+            .add_optional("tag", self.tag)
+            .add_optional("taggingtype", self.taggingtype)
+            .add_optional("limit", self.limit)
+            .add_optional("page", self.page);
 
         let mut params = builder.build();
 
