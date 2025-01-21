@@ -68,7 +68,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .send()
         .await?;
 
-    println!("{:?}", response);
+    match response {
+        APIResponse::Success(value) => {
+            println!("{}", value);
+        }
+        APIResponse::Error(err) => {
+            println!("Error: {} - {}", err.error, err.message);
+        }
+    }
 
     Ok(())
 }
@@ -84,20 +91,21 @@ let lastfm = Lastfm::builder()
     .api_secret(api_secret)
     .build()?;
 
-// req token
+// Request token
 let response = lastfm.auth().get_token().send().await?;
-let token = response["token"].clone();
 
-// authorize the token and get session_key
+let token = match response {
+    APIResponse::Success(value) => value.token,
+    APIResponse::Error(err) => {
+        return Err(Box::new(err) as Box<dyn Error>);
+    }
+};
+
+// Authorize the token and get session key
 lastfm.auth().pls_authorize(token.to_string());
-let response = lastfm
-    .auth()
-    .get_session()
-    .token(&token.to_string())
-    .send()
-    .await?;
+let response = lastfm.auth().get_session().token(&token).send().await?;
 
-println!("{response}");
+println!("Session: {}", response);
 ```
 
 
@@ -109,9 +117,13 @@ println!("{response}");
 - [x] **Chart**
 - [x] **Geo**
 - [x] **Library**
-- [ ] **Tag**
-- [ ] **Track**
-- [ ] **User**
+- [x] **Tag**
+- [x] **Track**
+- [x] **User**
+    - ~~scrobblings~~
+
+> **Note:**
+> If you're looking for a good scrobbling functionality, please use [rustfm-scrobble](https://github.com/dmfutcher/rustfm-scrobble) or any other library for now.
 
 
 ## Example Requests
@@ -127,7 +139,6 @@ let album_info = lastfm
     .album("album_name")
     .send()
     .await?;
-println!("{:?}", album_info);
 ```
 </details>
 
@@ -142,7 +153,6 @@ let tags = lastfm
     .album("album_name")
     .send()
     .await?;
-println!("{:?}", tags);
 ```
 </details>
 
@@ -158,11 +168,18 @@ let remove_response = lastfm
     .tags("tag_name")
     .send()
     .await?;
-println!("Tags removed: {:?}", remove_response);
 ```
 </details>
 
 More examples can be found in the [examples](examples) folder.
+
+## TODO
+
+- A proper Models instead of returning `serde_json::Value`
+- Proper testing of each endpoints.
+- Refactor using traits and macros.
+- Detailed error handling
+- A proper Logging
 
 ## Contributing
 
