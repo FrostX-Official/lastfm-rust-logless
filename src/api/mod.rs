@@ -7,6 +7,9 @@ mod chart;
 mod geo;
 mod library;
 mod parameter_builder;
+mod tag;
+mod track;
+mod user;
 
 pub use album::Album;
 pub use artist::Artist;
@@ -15,6 +18,9 @@ pub use chart::Chart;
 pub use geo::Geo;
 pub use library::Library;
 pub use parameter_builder::ParameterBuilder;
+pub use tag::Tag;
+pub use track::Track;
+pub use user::User;
 
 #[derive(Debug, Clone)]
 pub enum LastfmMethod {

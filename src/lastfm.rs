@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 use crate::{
-    api::{Chart, Geo, LastfmMethod, Library},
+    api::{Chart, Geo, LastfmMethod, Library, Tag, Track, User},
     error::{ApiError, Error, Result},
     Album, Artist, Auth,
 };
@@ -187,5 +187,20 @@ impl Lastfm {
     /// Creates a new `Library` instance for interacting with library-related methods.
     pub fn library(&self) -> Library {
         Library::new(self)
+    }
+
+    /// Creates a new `Tag` instance for interacting with tag-related methods.
+    pub fn tag(&self) -> Tag {
+        Tag::new(self)
+    }
+
+    /// Creates a new `Track` instance for interacting with track-related methods.
+    pub fn track(&self) -> Track {
+        Track::new(self)
+    }
+
+    /// Creates a new `User` instance for interacting with user-related methods.
+    pub fn user(&self) -> User {
+        User::new(self)
     }
 }
