@@ -75,7 +75,7 @@ impl<'a> UserGetRecentTracks<'a> {
 
         // Add only the necessary parameters
         builder = builder
-            .add_optional("username", self.username)
+            .add_optional("user", self.username)
             .add_optional("limit", self.limit.map(|l| l.to_string()))
             .add_optional("page", self.page.map(|p| p.to_string()))
             .add_optional("from", self.from.map(|f| f.to_string()))
