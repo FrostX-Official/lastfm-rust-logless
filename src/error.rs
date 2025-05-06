@@ -10,7 +10,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub struct ApiError {
     pub error: i64,
     pub message: String,
-    pub links: Vec<Value>,
+    pub links: Option<Vec<Value>>,
 }
 
 #[derive(Debug, Error)]
