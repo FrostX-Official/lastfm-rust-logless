@@ -61,8 +61,6 @@ impl<'a> AuthGetSession<'a> {
         session_params.insert("api_sig".to_string(), api_sig);
         session_params.insert("format".to_string(), "json".to_string());
 
-        println!("{session_params:?}");
-
         let response = self
             .lastfm
             .get_client()
@@ -72,7 +70,6 @@ impl<'a> AuthGetSession<'a> {
             .await?;
 
         let json_response: Value = response.json().await?;
-        println!("{:?}", json_response);
 
         if json_response.get("error").is_some() {
             let api_error: ApiError = serde_json::from_value(json_response)?;

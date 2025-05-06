@@ -33,7 +33,6 @@ impl<'a> Auth<'a> {
     }
 
     pub fn pls_authorize(&self, token: String) {
-        println!("{token}");
         let auth_url = format!(
             "https://www.last.fm/api/auth?api_key={}&token={}",
             self.api_key,
